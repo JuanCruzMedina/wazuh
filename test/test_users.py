@@ -92,7 +92,6 @@ class TestUserRouter(unittest.TestCase):
         self.assertEqual(USERS_COUNT, result.total_items)
         self.assertEqual(result.total_items, len(result.data))
         self.assertTrue(verify_users(result.data))
-        print([u.company.name for u in get_users(result.data)])
 
     def test_user_by_id_ok(self) -> None:
         """

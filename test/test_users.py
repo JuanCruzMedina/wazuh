@@ -12,7 +12,7 @@ from starlette.testclient import TestClient
 from src.server.app import app
 from src.server.models.repositories import GetAllResult
 from src.server.models.users import User
-from tests.test_tasks import verify_tasks
+from test.test_tasks import verify_tasks
 
 client = TestClient(app)
 
@@ -58,7 +58,7 @@ def verify_users(data: list[dict[str, Any]]):
 
 class TestUserRouter(unittest.TestCase):
     """
-    Class where user router tests are performed
+    Class where user router test are performed
     """
 
     class Endpoints(str, enum.Enum):

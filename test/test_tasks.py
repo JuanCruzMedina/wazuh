@@ -44,7 +44,7 @@ def verify_tasks(data: list[dict[str, Any]]):
 
 class TestTasksRouter(unittest.TestCase):
     """
-    Class where task router tests are performed
+    Class where task router test are performed
     """
 
     class Endpoints(str, enum.Enum):

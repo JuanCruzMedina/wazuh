@@ -12,10 +12,11 @@ Resolution of technical evaluation
 - Requests
 - Python Decouple
 - **Code formatter**: Black
+- **Test**: [Unittest](https://docs.python.org/3.5/library/unittest.html)
 
 ## Instructions
 
-**Run the api**
+### Run the api
 
 - Create virtual environment
 - Install dependencies on virtual environment
@@ -29,3 +30,21 @@ uvicorn src.server.app:app -reload
 **For run the main.py file**
 - Copy the example file '.env_example' as '.env' at the project level.
 - Sets the value corresponding to the variables.
+
+### For run the tests
+
+**Where are the tests?**
+
+The tests are located in 'test' folder. They are 2 files to test the routers endpoints.
+
+**How to run the tests?**
+
+- **Simple**:
+```commandline
+ python -m unittest
+```
+
+- **With details**:
+```commandline
+ python -m unittest -v
+```

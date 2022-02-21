@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Path, Query
 from starlette import status
 from src.server.models.repositories import GetAllResult
 from src.server.models.tasks import Task
@@ -13,7 +15,10 @@ router = APIRouter()
     response_model=GetAllResult,
     summary="Retrieves all tasks " "listed on the tasks.json " "file",
 )
-def tasks(title: str = None, completed: bool = None) -> GetAllResult:
+def tasks(
+    title: Optional[str] = Query(None, min_length=3, max_length=50),
+    completed: bool = None,
+) -> GetAllResult:
     """
     Retrieves all tasks listed on the tasks.json file
     :param title: Displays tasks containing the provided string in their title. Defaults to an empty string
@@ -29,7 +34,7 @@ def tasks(title: str = None, completed: bool = None) -> GetAllResult:
     response_model=Task,
     summary="Retrieves information from a " "single task.",
 )
-def task_by_id(id: int) -> Task:
+def task_by_id(id: int = Path(..., title="The ID of the task", ge=1)) -> Task:
     """
     Retrieves information from a single task.
     :param id: Task identifier

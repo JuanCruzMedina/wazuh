@@ -4,7 +4,7 @@ File where user endpoints are tested.
 
 import enum
 import unittest
-from typing import Any
+from typing import Any, Optional
 
 from starlette import status
 from starlette.testclient import TestClient
@@ -61,6 +61,17 @@ class TestUserRouter(unittest.TestCase):
     Class where user router test are performed
     """
 
+    @staticmethod
+    def get_users_params(street: str = None, city: str = None, company_name: str = None) -> dict[str, str]:
+        parameters = dict()
+        if street:
+            parameters['street'] = street
+        if city:
+            parameters['city'] = city
+        if company_name:
+            parameters['company_name'] = company_name
+        return parameters
+
     class Endpoints(str, enum.Enum):
         """
         User router endpoints
@@ -81,6 +92,7 @@ class TestUserRouter(unittest.TestCase):
         self.assertEqual(USERS_COUNT, result.total_items)
         self.assertEqual(result.total_items, len(result.data))
         self.assertTrue(verify_users(result.data))
+        print([u.company.name for u in get_users(result.data)])
 
     def test_user_by_id_ok(self) -> None:
         """
@@ -124,6 +136,84 @@ class TestUserRouter(unittest.TestCase):
 
         response = client.get(self.Endpoints.users_tasks.format(USERS_COUNT + 1))
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_user_by_street_ok(self) -> None:
+        """
+        Test the method that allows to obtain all the users that reside in the street passed as a parameter
+        """
+        streets = ["Kulas Light", "Victor Plains", "Douglas Extension", "Hoeger Mall", "Skiles Walks",
+                   "Norberto Crossing", "Rex Trail", "Ellsworth Summit", "Dayna Park", "Kattie Turnpike"]
+
+        for street in streets:
+            response = client.get(self.Endpoints.users, params=self.get_users_params(street=street))
+            self.assertEqual(status.HTTP_200_OK, response.status_code)
+            result = GetAllResult(**response.json())
+            self.assertGreaterEqual(1, result.total_items)
+            self.assertEqual(result.total_items, len(result.data))
+            self.assertTrue(verify_users(result.data))
+
+    def test_user_by_street_empty(self) -> None:
+        """
+        Try the method that allows to obtain all the users that reside in the street passed as a parameter
+        when it does not find results
+        """
+        response = client.get(self.Endpoints.users, params=self.get_users_params(street='JUMANJI-STREET' * 3))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        result = GetAllResult(**response.json())
+        self.assertEqual(0, result.total_items)
+        self.assertEqual(result.total_items, len(result.data))
+
+    def test_user_by_city_ok(self) -> None:
+        """
+        Try the method that allows to obtain all the users that reside in the city passed as a parameter
+        """
+        cities = ['Gwenborough', 'Wisokyburgh', 'McKenziehaven', 'South Elvis', 'Roscoeview', 'South Christy',
+                  'Howemouth', 'Aliyaview', 'Bartholomebury', 'Lebsackbury']
+
+        for city in cities:
+            response = client.get(self.Endpoints.users, params=self.get_users_params(city=city))
+            self.assertEqual(status.HTTP_200_OK, response.status_code)
+            result = GetAllResult(**response.json())
+            self.assertGreaterEqual(1, result.total_items)
+            self.assertEqual(result.total_items, len(result.data))
+            self.assertTrue(verify_users(result.data))
+
+    def test_user_by_city_fail(self) -> None:
+        """
+        Try the method that allows to obtain all the users that reside in the street passed as a parameter
+        when it does not find results
+        """
+        response = client.get(self.Endpoints.users, params=self.get_users_params(city='JUMANJI-CITY' * 3))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        result = GetAllResult(**response.json())
+        self.assertEqual(0, result.total_items)
+        self.assertEqual(result.total_items, len(result.data))
+
+    def test_user_by_company_ok(self) -> None:
+        """
+        Test the method that allows to obtain all the users that work in the company passed as a parameter
+        """
+        companies = ['Romaguera-Crona', 'Deckow-Crist', 'Romaguera-Jacobson', 'Robel-Corkery', 'Keebler LLC',
+                     'Considine-Lockman', 'Johns Group', 'Abernathy Group', 'Yost and Sons', 'Hoeger LLC']
+
+        for company in companies:
+            response = client.get(self.Endpoints.users, params=self.get_users_params(company_name=company))
+            self.assertEqual(status.HTTP_200_OK, response.status_code)
+            result = GetAllResult(**response.json())
+            self.assertGreaterEqual(1, result.total_items)
+            self.assertEqual(result.total_items, len(result.data))
+            self.assertTrue(verify_users(result.data))
+
+    def test_user_by_company_fail(self) -> None:
+        """
+        Test the method that allows to obtain all the users that work in the company passed as a parameter
+        when it does not find results
+        """
+        response = client.get(self.Endpoints.users, params=self.get_users_params(company_name='JUMANJI-COMPANY' * 3))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        result = GetAllResult(**response.json())
+        self.assertEqual(0, result.total_items)
+        self.assertEqual(result.total_items, len(result.data))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Query, Path
 from starlette import status
 from src.server.models.repositories import GetAllResult
 from src.server.models.users import User
@@ -7,7 +9,7 @@ from src.server.repositories.users import get_all_users, get_user_by_id, get_use
 router = APIRouter()
 
 
-def get_user(id: int):
+def get_user(id: int = Path(..., title="The ID of the user", ge=1)) -> User:
     """
     Retrieves information from a single user
     :param id: User id
@@ -28,12 +30,16 @@ def get_user(id: int):
     response_model=GetAllResult,
     summary="Retrieves all users.",
 )
-def users() -> GetAllResult:
+def users(
+    street: Optional[str] = Query(None, min_length=3, max_length=50),
+    city: Optional[str] = Query(None, min_length=3, max_length=50),
+    company_name: Optional[str] = Query(None, min_length=3, max_length=50),
+) -> GetAllResult:
     """
     Retrieves all users listed on the users.json file.
     :return: All users
     """
-    return GetAllResult(data=get_all_users())
+    return GetAllResult(data=get_all_users(street, city, company_name))
 
 
 @router.get(
@@ -42,7 +48,7 @@ def users() -> GetAllResult:
     response_model=User,
     summary="Retrieves all users.",
 )
-def user_by_id(id: int) -> User:
+def user_by_id(id: int = Path(..., title="The ID of the user", ge=1)) -> User:
     """
     Retrieves information from a single user
     :param id: User id
@@ -58,7 +64,11 @@ def user_by_id(id: int) -> User:
     response_model=GetAllResult,
     summary="Retrieves all tasks from the specified user.",
 )
-def user_tasks(id: int, title: str = None, completed: bool = None) -> GetAllResult:
+def user_tasks(
+    id: int = Path(..., title="The ID of the user", ge=1),
+    title: Optional[str] = Query(None, min_length=3, max_length=50),
+    completed: bool = None,
+) -> GetAllResult:
     """
     Retrieves all tasks from the specified user
     :param id: User id

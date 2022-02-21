@@ -1,18 +1,34 @@
 from typing import Optional
 
+from src.server.application.utils import filter_if
 from src.server.models.tasks import Task
 from src.server.models.users import User
 from src.server.repositories.tasks import get_tasks_by_user_id
 from src.server.persistence.database import StaticData as Db, load_users
 
 
+def apply_users_filters(users: list[User], street: Optional[str], city: Optional[str], company_name: Optional[str]) \
+        -> list[User]:
+    def word_format(w: Optional[str]):
+        return w.lower() if w is not None else None
+
+    street, city, company_name = word_format(street), word_format(city), word_format(company_name)
+
+    users = filter_if(street is not None, lambda d: street in d.address.street.lower(), users)
+    users = filter_if(city is not None, lambda d: city in d.address.city.lower(), users)
+    users = filter_if(company_name is not None, lambda d: company_name in d.company.name.lower(), users)
+    return list(users)
+
+
 @load_users
-def get_all_users() -> list[User]:
+def get_all_users(street: Optional[str], city: Optional[str], company_name: Optional[str]) -> list[User]:
     """
     Retrieve all users
     :return: users
     """
-    return list(Db.Users)
+    users: list[User] = list(Db.Users)
+    users = apply_users_filters(users, street, city, company_name)
+    return list(users)
 
 
 @load_users
@@ -29,7 +45,7 @@ def get_user_by_id(user_id: int) -> Optional[User]:
 
 @load_users
 def get_user_tasks(
-    user_id: int, title: Optional[str], completed: Optional[bool]
+        user_id: int, title: Optional[str], completed: Optional[bool]
 ) -> list[Task]:
     """
     Retrieve user tasks

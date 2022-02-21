@@ -51,8 +51,9 @@ class TestTasksRouter(unittest.TestCase):
         """
         Task router endpoints
         """
-        tasks = '/tasks/'
-        task_by_id = '/tasks/{}'
+
+        tasks = "/tasks/"
+        task_by_id = "/tasks/{}"
 
     def test_tasks(self):
         """
@@ -70,7 +71,7 @@ class TestTasksRouter(unittest.TestCase):
         """
         Test the method that allows to get all tasks, by title
         """
-        words = ['delectus', 'aut', 'autem', 'veritatis', 'pariatur']
+        words = ["delectus", "aut", "autem", "veritatis", "pariatur"]
 
         for word in words:
             response = client.get(self.Endpoints.tasks, params={"title": word})
@@ -83,7 +84,7 @@ class TestTasksRouter(unittest.TestCase):
         """
         Test the method that allows to get all tasks, by title
         """
-        words = ['messi', 'maradona']
+        words = ["messi", "maradona"]
 
         for word in words:
             response = client.get(self.Endpoints.tasks, params={"title": word})
@@ -96,19 +97,29 @@ class TestTasksRouter(unittest.TestCase):
         """
         Test the method that allows to get all tasks, by status
         """
-        response_completed_tasks = client.get(self.Endpoints.tasks, params={"completed": True})
+        response_completed_tasks = client.get(
+            self.Endpoints.tasks, params={"completed": True}
+        )
         self.assertEqual(status.HTTP_200_OK, response_completed_tasks.status_code)
         result_completed_tasks = GetAllResult(**response_completed_tasks.json())
-        self.assertEqual(result_completed_tasks.total_items, len(result_completed_tasks.data))
+        self.assertEqual(
+            result_completed_tasks.total_items, len(result_completed_tasks.data)
+        )
         self.assertTrue(verify_tasks(result_completed_tasks.data))
 
-        response_not_completed_tasks = client.get(self.Endpoints.tasks, params={"completed": False})
+        response_not_completed_tasks = client.get(
+            self.Endpoints.tasks, params={"completed": False}
+        )
         self.assertEqual(status.HTTP_200_OK, response_not_completed_tasks.status_code)
         result_not_completed_tasks = GetAllResult(**response_not_completed_tasks.json())
-        self.assertEqual(result_not_completed_tasks.total_items, len(result_not_completed_tasks.data))
+        self.assertEqual(
+            result_not_completed_tasks.total_items, len(result_not_completed_tasks.data)
+        )
         self.assertTrue(verify_tasks(result_not_completed_tasks.data))
 
-        tasks_count_by_status = result_completed_tasks.total_items + result_not_completed_tasks.total_items
+        tasks_count_by_status = (
+            result_completed_tasks.total_items + result_not_completed_tasks.total_items
+        )
 
         response_all_tasks = client.get(self.Endpoints.tasks)
         self.assertEqual(status.HTTP_200_OK, response_all_tasks.status_code)
@@ -116,7 +127,9 @@ class TestTasksRouter(unittest.TestCase):
         self.assertEqual(result_all_tasks.total_items, len(result_all_tasks.data))
         self.assertTrue(verify_tasks(result_all_tasks.data))
 
-        self.assertEqual(TASKS_COUNT, result_all_tasks.total_items, tasks_count_by_status)
+        self.assertEqual(
+            TASKS_COUNT, result_all_tasks.total_items, tasks_count_by_status
+        )
 
     def test_task_by_id_ok(self):
         """
@@ -140,5 +153,5 @@ class TestTasksRouter(unittest.TestCase):
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

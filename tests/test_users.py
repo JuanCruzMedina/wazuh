@@ -66,9 +66,9 @@ class TestUserRouter(unittest.TestCase):
         User router endpoints
         """
 
-        users = '/users/'
-        user_by_id = '/users/{}'
-        users_tasks = '/users/{}/tasks'
+        users = "/users/"
+        user_by_id = "/users/{}"
+        users_tasks = "/users/{}/tasks"
 
     def test_users(self) -> None:
         """
@@ -122,9 +122,9 @@ class TestUserRouter(unittest.TestCase):
         when the identifier passed as a parameter does not belong to a user
         """
 
-        response = client.get(self.Endpoints.users_tasks.format(USERS_COUNT+1))
+        response = client.get(self.Endpoints.users_tasks.format(USERS_COUNT + 1))
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

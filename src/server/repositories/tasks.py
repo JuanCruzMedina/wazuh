@@ -5,7 +5,9 @@ from src.server.models.tasks import Task
 from src.server.persistence.database import StaticData as Db, load_tasks
 
 
-def apply_tasks_filters(tasks: list[Task], title: Optional[str], completed: Optional[bool]) -> list[Task]:
+def apply_tasks_filters(
+    tasks: list[Task], title: Optional[str], completed: Optional[bool]
+) -> list[Task]:
     """
     Apply the filters in the task search
     :param tasks: Tasks to filter
@@ -46,7 +48,9 @@ def get_task_by_id(task_id: int) -> Optional[Task]:
 
 
 @load_tasks
-def get_tasks_by_user_id(user_id: int, title: Optional[str], completed: Optional[bool]) -> Generator:
+def get_tasks_by_user_id(
+    user_id: int, title: Optional[str], completed: Optional[bool]
+) -> Generator:
     """
     Get all the tasks of a user based on their identifier
     :param user_id: user id

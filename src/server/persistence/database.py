@@ -16,6 +16,7 @@ class StaticData:
     Class that contains the static information of the jsons.
     It is used to simulate the database.
     """
+
     Users: list[User] = []
     Tasks: list[Task] = []
 
@@ -25,6 +26,7 @@ def load_users(function):
     It allows to load the static information corresponding to the users, in case it is not previously loaded.
     It is used in the user repository
     """
+
     def wrapper(*args, **kwargs):
         if not StaticData.Users:
             print("Loading users...")
@@ -42,6 +44,7 @@ def load_tasks(function):
     It allows to load the static information corresponding to the tasks, in case it is not previously loaded.
     It is used in the user repository
     """
+
     def wrapper(*args, **kwargs):
         if not StaticData.Tasks:
             print("Loading tasks...")

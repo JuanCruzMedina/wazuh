@@ -18,17 +18,19 @@ def get_all_users() -> list[User]:
 @load_users
 def get_user_by_id(user_id: int) -> Optional[User]:
     """
-        Get a user based on an identifier
-        :param user_id:  user identifier
-        :return: Returns the user if found, None otherwise
-        """
+    Get a user based on an identifier
+    :param user_id:  user identifier
+    :return: Returns the user if found, None otherwise
+    """
     for user in Db.Users:
         if user.id == user_id:
             return user
 
 
 @load_users
-def get_user_tasks(user_id: int, title: Optional[str], completed: Optional[bool]) -> list[Task]:
+def get_user_tasks(
+    user_id: int, title: Optional[str], completed: Optional[bool]
+) -> list[Task]:
     """
     Retrieve user tasks
     :param user_id: user id

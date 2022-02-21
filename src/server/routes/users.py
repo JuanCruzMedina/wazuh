@@ -15,12 +15,19 @@ def get_user(id: int):
     """
     user: User = get_user_by_id(id)
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"The user with the id '{id}' does not exist.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The user with the id '{id}' does not exist.",
+        )
     return user
 
 
-@router.get("/users/", status_code=status.HTTP_200_OK, response_model=GetAllResult, summary="Retrieves all users.")
+@router.get(
+    "/users/",
+    status_code=status.HTTP_200_OK,
+    response_model=GetAllResult,
+    summary="Retrieves all users.",
+)
 def users() -> GetAllResult:
     """
     Retrieves all users listed on the users.json file.
@@ -29,7 +36,12 @@ def users() -> GetAllResult:
     return GetAllResult(data=get_all_users())
 
 
-@router.get("/users/{id}", status_code=status.HTTP_200_OK, response_model=User, summary="Retrieves all users.")
+@router.get(
+    "/users/{id}",
+    status_code=status.HTTP_200_OK,
+    response_model=User,
+    summary="Retrieves all users.",
+)
 def user_by_id(id: int) -> User:
     """
     Retrieves information from a single user
@@ -40,8 +52,12 @@ def user_by_id(id: int) -> User:
     return user
 
 
-@router.get("/users/{id}/tasks", status_code=status.HTTP_200_OK, response_model=GetAllResult,
-            summary="Retrieves all tasks from the specified user.")
+@router.get(
+    "/users/{id}/tasks",
+    status_code=status.HTTP_200_OK,
+    response_model=GetAllResult,
+    summary="Retrieves all tasks from the specified user.",
+)
 def user_tasks(id: int, title: str = None, completed: bool = None) -> GetAllResult:
     """
     Retrieves all tasks from the specified user

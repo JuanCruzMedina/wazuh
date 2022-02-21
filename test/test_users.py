@@ -62,14 +62,11 @@ class TestUserRouter(unittest.TestCase):
     """
 
     @staticmethod
-    def get_users_params(street: str = None, city: str = None, company_name: str = None) -> dict[str, str]:
+    def get_users_params(street: str = "", city: str = "", company_name: str = "") -> dict[str, str]:
         parameters = dict()
-        if street:
-            parameters['street'] = street
-        if city:
-            parameters['city'] = city
-        if company_name:
-            parameters['company_name'] = company_name
+        parameters['street'] = street
+        parameters['city'] = city
+        parameters['company_name'] = company_name
         return parameters
 
     class Endpoints(str, enum.Enum):
@@ -90,6 +87,18 @@ class TestUserRouter(unittest.TestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         result = GetAllResult(**response.json())
         self.assertEqual(USERS_COUNT, result.total_items)
+        self.assertEqual(result.total_items, len(result.data))
+        self.assertTrue(verify_users(result.data))
+
+    def test_user_by_empty_params(self) -> None:
+        """
+        Test the method that allows to obtain all the users, with empty parameters
+        """
+
+        response = client.get(self.Endpoints.users, params=self.get_users_params())
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        result = GetAllResult(**response.json())
+        self.assertGreaterEqual(USERS_COUNT, result.total_items)
         self.assertEqual(result.total_items, len(result.data))
         self.assertTrue(verify_users(result.data))
 
@@ -153,7 +162,7 @@ class TestUserRouter(unittest.TestCase):
 
     def test_user_by_street_empty(self) -> None:
         """
-        Try the method that allows to obtain all the users that reside in the street passed as a parameter
+        Test the method that allows to obtain all the users that reside in the street passed as a parameter
         when it does not find results
         """
         response = client.get(self.Endpoints.users, params=self.get_users_params(street='JUMANJI-STREET' * 3))
@@ -164,7 +173,7 @@ class TestUserRouter(unittest.TestCase):
 
     def test_user_by_city_ok(self) -> None:
         """
-        Try the method that allows to obtain all the users that reside in the city passed as a parameter
+        Test the method that allows to obtain all the users that reside in the city passed as a parameter
         """
         cities = ['Gwenborough', 'Wisokyburgh', 'McKenziehaven', 'South Elvis', 'Roscoeview', 'South Christy',
                   'Howemouth', 'Aliyaview', 'Bartholomebury', 'Lebsackbury']
@@ -179,7 +188,7 @@ class TestUserRouter(unittest.TestCase):
 
     def test_user_by_city_fail(self) -> None:
         """
-        Try the method that allows to obtain all the users that reside in the street passed as a parameter
+        Test the method that allows to obtain all the users that reside in the street passed as a parameter
         when it does not find results
         """
         response = client.get(self.Endpoints.users, params=self.get_users_params(city='JUMANJI-CITY' * 3))

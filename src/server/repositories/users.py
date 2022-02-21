@@ -7,15 +7,28 @@ from src.server.repositories.tasks import get_tasks_by_user_id
 from src.server.persistence.database import StaticData as Db, load_users
 
 
-def apply_users_filters(users: list[User], street: Optional[str], city: Optional[str], company_name: Optional[str]) \
-        -> list[User]:
+def apply_users_filters(users: list[User], street: Optional[str], city: Optional[str], company_name: Optional[str]) -> \
+list[User]:
+    """ Apply the filters in the users search
+    :param users: Users to filter
+    :param street: User Street
+    :param city: User City
+    :param company_name: User Company name
+    :return: Filtered users
+    """
+
     def word_format(w: Optional[str]):
+        """
+        if the word is not null it returns the word in lowercase
+        """
         return w.lower() if w is not None else None
 
     street, city, company_name = word_format(street), word_format(city), word_format(company_name)
-
+    # Filter users based on their attribute “street”. When not specified, returns all tasks.
     users = filter_if(street is not None, lambda d: street in d.address.street.lower(), users)
+    # Filter users based on their attribute “city”. When not specified, returns all tasks.
     users = filter_if(city is not None, lambda d: city in d.address.city.lower(), users)
+    # Filter users based on their attribute “company_name”. When not specified, returns all tasks.
     users = filter_if(company_name is not None, lambda d: company_name in d.company.name.lower(), users)
     return list(users)
 

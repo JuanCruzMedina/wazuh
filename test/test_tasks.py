@@ -57,10 +57,22 @@ class TestTasksRouter(unittest.TestCase):
 
     def test_tasks(self):
         """
-        Test the method that allows to get all tasks, without passing parameters
+        Test the method that allows to get all tasks
         """
 
         response = client.get(self.Endpoints.tasks)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        result = GetAllResult(**response.json())
+        self.assertEqual(TASKS_COUNT, result.total_items)
+        self.assertEqual(result.total_items, len(result.data))
+        self.assertTrue(verify_tasks(result.data))
+
+    def test_tasks_empty_parameters(self):
+        """
+        Test the method that allows to get all tasks, without passing parameters values
+        """
+
+        response = client.get(self.Endpoints.tasks, params={"title": "", "completed": None})
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         result = GetAllResult(**response.json())
         self.assertEqual(TASKS_COUNT, result.total_items)
@@ -118,7 +130,7 @@ class TestTasksRouter(unittest.TestCase):
         self.assertTrue(verify_tasks(result_not_completed_tasks.data))
 
         tasks_count_by_status = (
-            result_completed_tasks.total_items + result_not_completed_tasks.total_items
+                result_completed_tasks.total_items + result_not_completed_tasks.total_items
         )
 
         response_all_tasks = client.get(self.Endpoints.tasks)

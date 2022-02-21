@@ -16,7 +16,7 @@ router = APIRouter()
     summary="Retrieves all tasks " "listed on the tasks.json " "file",
 )
 def tasks(
-    title: Optional[str] = Query(None, min_length=3, max_length=50),
+    title: Optional[str] = Query("", min_length=0, max_length=50),
     completed: bool = None,
 ) -> GetAllResult:
     """

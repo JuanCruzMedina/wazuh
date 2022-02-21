@@ -15,6 +15,8 @@ def apply_tasks_filters(
     :param completed: Status of the tasks to get
     :return: Filtered tasks
     """
+
+    title = title.lower() if title != "" and title is not None else None
     # Filter tasks based on their attribute “completed”. When not specified, returns all tasks.
     tasks = filter_if(completed is not None, lambda d: d.completed == completed, tasks)
     # Filter tasks that do not contain the provided string in their title. Defaults to an empty string.

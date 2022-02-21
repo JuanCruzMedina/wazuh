@@ -31,9 +31,9 @@ def get_user(id: int = Path(..., title="The ID of the user", ge=1)) -> User:
     summary="Retrieves all users.",
 )
 def users(
-    street: Optional[str] = Query(None, min_length=3, max_length=50),
-    city: Optional[str] = Query(None, min_length=3, max_length=50),
-    company_name: Optional[str] = Query(None, min_length=3, max_length=50),
+    street: Optional[str] = Query("", min_length=0, max_length=50),
+    city: Optional[str] = Query("", min_length=0, max_length=50),
+    company_name: Optional[str] = Query("", min_length=0, max_length=50),
 ) -> GetAllResult:
     """
     Retrieves all users listed on the users.json file.
@@ -66,7 +66,7 @@ def user_by_id(id: int = Path(..., title="The ID of the user", ge=1)) -> User:
 )
 def user_tasks(
     id: int = Path(..., title="The ID of the user", ge=1),
-    title: Optional[str] = Query(None, min_length=3, max_length=50),
+    title: Optional[str] = Query("", min_length=0, max_length=50),
     completed: bool = None,
 ) -> GetAllResult:
     """
